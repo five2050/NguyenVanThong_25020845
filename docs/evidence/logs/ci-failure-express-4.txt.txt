@@ -1,0 +1,13 @@
+Run mvn --batch-mode --no-transfer-progress clean verify
+Failures: 
+[ERROR]   ShippingCalculatorTest.rejectsUnknownOrMissingServiceType:31 Unexpected exception type thrown, expected: <java.lang.IllegalArgumentException> but was: <java.lang.NullPointerException>
+[INFO] 
+[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.190 s
+[INFO] Finished at: 2026-11-03T18:10:36Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test (default-test) on project week9-bank-system: There are test failures.
