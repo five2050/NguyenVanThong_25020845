@@ -1,0 +1,10 @@
+Run mvn --batch-mode --no-transfer-progress clean verify
+[WARNING] The POM for ch.qos.logback:logback-classic:jar:9.9.9 is missing, no dependency information available
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.929 s
+[INFO] Finished at: 2026-11-03T17:46:42Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal on project week9-bank-system: Could not resolve dependencies for project com.practice.maven:week9-bank-system:jar:1.0-SNAPSHOT
+[ERROR] dependency: ch.qos.logback:logback-classic:jar:9.9.9 (compile)
