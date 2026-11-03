@@ -1,0 +1,10 @@
+2026-11-03T17:57:50.285 INFO  [main] com.lab.ShippingCalculator - Shipping calculated: type=STANDARD, weight=5.0, fee=15005.0
+2026-11-03T17:57:50.307 INFO  [main] com.lab.ShippingCalculator - Shipping calculated: type=EXPRESS, weight=5.0, fee=45000.0
+[ERROR] Tests run: 4, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.099 s <<<< FAILURE! -- in com.lab.ShippingCalculatorTest
+[ERROR] com.lab.ShippingCalculatorTest.calculatesStandardShipping -- Time elapsed: 0.006 s <<<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <15000.0> but was: <15005.0>
+[ERROR] Failures:
+[ERROR]   ShippingCalculatorTest.calculatesStandardShipping:14 expected: <15000.0> but was: <15005.0>
+[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test (default-test) on project week9-bank-system: There are test failures.
+[ERROR] Process completed with exit code 1.
