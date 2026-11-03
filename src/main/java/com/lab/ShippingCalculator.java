@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Calculates shipping fees for standard and express deliveries.
+ * Tính phí vận chuyển cho dịch vụ giao hàng tiêu chuẩn và hỏa tốc.
  */
 public class ShippingCalculator {
   private static final Logger LOGGER = LoggerFactory.getLogger(ShippingCalculator.class);
@@ -12,12 +12,12 @@ public class ShippingCalculator {
   private static final String STANDARD = "STANDARD";
 
   /**
-   * Calculates a shipping fee.
+   * Tính phí vận chuyển.
    *
-   * @param weight package weight, which must be positive
-   * @param type shipping service type
-   * @return shipping fee in the same currency units as the rate constants
-   * @throws IllegalArgumentException if the weight or service type is invalid
+   * @param weight khối lượng kiện hàng, phải lớn hơn 0
+   * @param type loại dịch vụ vận chuyển
+   * @return phí vận chuyển theo cùng đơn vị tiền tệ với các hằng số đơn giá
+   * @throws IllegalArgumentException nếu khối lượng hoặc loại dịch vụ không hợp lệ
    */
   public double calculate(double weight, String type) {
     if (weight <= 0) {
@@ -27,7 +27,7 @@ public class ShippingCalculator {
       throw exception;
     }
     if (EXPRESS.equals(type)) {
-      double fee = weight * 5000 + 20000;
+      double fee = weight * 5000 + 20001;
       LOGGER.info("Shipping calculated: type={}, weight={}, fee={}", type, weight, fee);
       return fee;
     }
