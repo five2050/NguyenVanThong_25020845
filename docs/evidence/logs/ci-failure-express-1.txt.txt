@@ -1,0 +1,14 @@
+Run mvn --batch-mode --no-transfer-progress clean verify
+[INFO] Running com.lab.ShippingCalculatorTest
+[ERROR] Failures: 
+[ERROR]   ShippingCalculatorTest.calculatesExpressShipping:19 expected: <45000.0> but was: <45001.0>
+[INFO] 
+[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[ERROR] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.579 s
+[INFO] Finished at: 2026-11-03T16:12:55Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test (default-test) on project week9-bank-system: There are test failures.

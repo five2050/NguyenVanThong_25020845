@@ -1,0 +1,9 @@
+Run mvn --batch-mode --no-transfer-progress clean verify
+Failures: 
+[ERROR]   ShippingCalculatorTest.calculatesExpressShipping:19 expected: <45000.0> but was: <45001.0>
+[INFO] 
+[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
