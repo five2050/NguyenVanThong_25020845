@@ -1,9 +1,5 @@
 Run mvn --batch-mode --no-transfer-progress clean verify
 Failures: 
-[ERROR]   ShippingCalculatorTest.calculatesExpressShipping:19 expected: <45000.0> but was: <45001.0>
-[INFO] 
-[ERROR] Tests run: 15, Failures: 1, Errors: 0, Skipped: 0
-[INFO] 
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
+[WARNING] The POM for ch.qos.logback:logback-classic:jar:9.9.9 is missing, no dependency information available
+[ERROR] Failed to execute goal on project week9-bank-system: Could not resolve dependencies for project com.practice.maven:week9-bank-system:jar:1.0-SNAPSHOT
+[ERROR] dependency: ch.qos.logback:logback-classic:jar:9.9.9 (compile)
