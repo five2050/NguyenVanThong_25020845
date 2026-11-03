@@ -26,7 +26,7 @@ public class ShippingCalculator {
       LOGGER.error("Shipping calculation rejected: weight={}, type={}", weight, type, exception);
       throw exception;
     }
-    if (EXPRESS.equals(type)) {
+    if (type.equals(EXPRESS)) {
       double fee = weight * 5000 + 20000;
       LOGGER.info("Shipping calculated: type={}, weight={}, fee={}", type, weight, fee);
       return fee;
