@@ -32,7 +32,7 @@ public class ShippingCalculator {
       return fee;
     }
     if (STANDARD.equals(type)) {
-      double fee = weight * 3000;
+      double fee = weight * 3001;
       LOGGER.info("Shipping calculated: type={}, weight={}, fee={}", type, weight, fee);
       return fee;
     }
