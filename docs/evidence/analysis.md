@@ -1,34 +1,42 @@
-## PHÂN TÍCH LỖI CI – EXPRESS SHIPPING
+# Báo cáo phân tích lỗi CI
 
-## 1. Bằng chứng
-Ảnh chụp GitHub Actions: images/ci-failure-express.png
-Log lỗi: logs/ci-failure-express.txt
+Tài liệu ghi lại các lỗi đã tái hiện trong GitHub Actions, bằng chứng log, nguyên nhân và kết quả sau khi sửa. Các đường dẫn ảnh bên dưới trỏ tới ảnh đã lưu trong repository; run GitHub Actions là nguồn đối chiếu trực tiếp.
 
-## 2. Vị trí lỗi
-File kiểm thử: ShippingCalculatorTest.java
-Phương thức kiểm thử: calculatesExpressShipping()
-Dòng phát hiện lỗi: 19
+## Lỗi 1 — Sai kết quả phí EXPRESS
 
-## 3. Log lỗi từ GitHub Actions
-ShippingCalculatorTest.calculatesExpressShipping:19
-expected: <45000.0> but was: <45001.0>
-Tests run: 15, Failures: 1, Errors: 0, Skipped: 0
-BUILD FAILURE
+| Mục | Chi tiết |
+|---|---|
+| Vị trí | `src/main/java/com/lab/ShippingCalculator.java`, dòng 25 (công thức EXPRESS tại commit gây lỗi) |
+| Kiểm thử phát hiện | `src/test/java/com/lab/ShippingCalculatorTest.java`, dòng 19 — `calculatesExpressShipping()` |
+| Run lỗi | [Java CI #2](https://github.com/five2050/NguyenVanThong_25020845/actions/runs/41671773593) |
+| Bằng chứng ảnh | [`ci-failure-express-2.png.png`](images/ci-failure-express-2.png.png) |
+| Bằng chứng log | [`ci-failure-express-1.txt.txt`](logs/ci-failure-express-1.txt.txt) |
+| Kết quả sau sửa | [Java CI #3 thành công](https://github.com/five2050/NguyenVanThong_25020845/actions/runs/41672880221) |
 
-## 4. Giải thích nguyên nhân kỹ thuật
-Phương thức tính phí vận chuyển EXPRESS trả về kết quả 45001 thay vì 45000 như giá trị mong đợi trong kiểm thử.
-Điều này cho thấy logic tính phí vận chuyển EXPRESS đang có sai lệch 1 đơn vị. Kiểm thử JUnit phát hiện sự không khớp giữa giá trị thực tế và giá trị mong đợi, khiến quá trình Maven Verify thất bại.
+Log cho thấy kiểm thử kỳ vọng `45000.0` nhưng nhận `45001.0`. Công thức EXPRESS cộng thừa 1 đơn vị nên giá trị thực tế không khớp với mức phí mong đợi. JUnit bắt lỗi tại assertion của kiểm thử; cần sửa công thức tính phí trong `ShippingCalculator` và chạy lại toàn bộ verify.
 
-## 5. Đề xuất cách sửa
+## Lỗi 2 — Phiên bản dependency Logback không tồn tại
 
-Kiểm tra phương thức tính phí vận chuyển EXPRESS trong file ShippingCalculator.java.
-Rà soát công thức và các giá trị được sử dụng trong quá trình tính phí.
-Điều chỉnh logic để kết quả trả về đúng 45000 đối với dữ liệu đầu vào của bài kiểm thử.
+| Mục | Chi tiết |
+|---|---|
+| Vị trí | `pom.xml`, dòng 18 — phiên bản `logback-classic` |
+| Run lỗi và ảnh chụp | [Java CI #8](https://github.com/five2050/NguyenVanThong_25020845/actions/runs/41686090740) |
+| Run lặp lại do push tiếp theo | [Java CI #9](https://github.com/five2050/NguyenVanThong_25020845/actions/runs/41687441988) |
+| Log lưu trong repository | [`ci-failure-logback-dependency.txt`](logs/ci-failure-logback-dependency.txt) |
+| Trạng thái sửa | Đã khôi phục phiên bản đã dùng trước đó `1.4.11`; chờ CI xác nhận ở commit sửa lỗi. |
 
-## 6. Kiểm tra sau khi sửa
-Chạy lệnh sau để thực hiện lại quá trình kiểm thử:
-mvn clean verify
-Kiểm tra kết quả:
-Tất cả các bài kiểm thử đều thành công.
-Không còn lỗi sai lệch kết quả tính phí EXPRESS.
-GitHub Actions hoàn thành thành công (Build Success).
+### Trích log GitHub Actions
+
+```text
+[WARNING] The POM for ch.qos.logback:logback-classic:jar:9.9.9 is missing, no dependency information available
+[ERROR] Failed to execute goal on project week9-bank-system: Could not resolve dependencies for project com.practice.maven:week9-bank-system:jar:1.0-SNAPSHOT
+[ERROR] dependency: ch.qos.logback:logback-classic:jar:9.9.9 (compile)
+[ERROR]     Could not find artifact ch.qos.logback:logback-classic:jar:9.9.9 in central (https://repo.maven.apache.org/maven2)
+[ERROR] BUILD FAILURE
+```
+
+**Nguyên nhân kỹ thuật:** Maven cần tải dependency trước khi biên dịch hoặc chạy test. `9.9.9` không có trên Maven Central, nên quá trình phân giải dependency thất bại và build dừng sớm; đây không phải lỗi trong Java source hay test.
+
+**Cách sửa:** đặt lại phiên bản hợp lệ `1.4.11` trong `pom.xml`. Sau push, đợi job `clean verify` hoàn tất và xác nhận toàn bộ matrix CI xanh trước khi tạo lỗi tiếp theo.
+
+> Ảnh chụp do người dùng lưu; trang Actions ở liên kết trên là bằng chứng truy cập được. Nếu cần ảnh hiển thị ngay trong bản preview của Markdown, hãy tải ảnh chụp lên `docs/evidence/images/` rồi cập nhật liên kết tương đối tại đây.
