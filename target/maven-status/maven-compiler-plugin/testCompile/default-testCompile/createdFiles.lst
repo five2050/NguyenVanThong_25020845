@@ -1,0 +1,7 @@
+bank\system\CustomerTest.class
+bank\system\TransactionTest.class
+bank\system\AccountOperationsTest.class
+bank\system\AccountTest.class
+bank\system\BankExceptionTest.class
+bank\system\BankTest.class
+com\lab\ShippingCalculatorTest.class

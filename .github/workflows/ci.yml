@@ -1,0 +1,83 @@
+name: Java CI
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 with Maven cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Verify, test, enforce coverage, and package
+        run: mvn --batch-mode --no-transfer-progress clean verify
+
+      - name: Upload executable JAR
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bank-system-${{ matrix.os }}-jar
+          path: target/week9-bank-system-1.0-SNAPSHOT.jar
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report-${{ matrix.os }}
+          path: target/site/jacoco/index.html
+          if-no-files-found: warn
+          retention-days: 14
+
+  checkstyle-review:
+    name: Checkstyle PR annotations
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 with Maven cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Create Checkstyle XML report
+        run: mvn --batch-mode --no-transfer-progress checkstyle:check -Dcheckstyle.failOnViolation=false
+
+      - name: Comment on Checkstyle violations
+        uses: dbelyaev/action-checkstyle@v1
+        with:
+          checkstyle_config: google_checks.xml
+          checkstyle_report: target/checkstyle-result.xml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          level: warning

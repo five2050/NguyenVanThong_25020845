@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Bank.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Week 9 Bank System</a> &gt; <a href="index.source.html" class="el_package">bank.system</a> &gt; <span class="el_source">Bank.java</span></div><h1>Bank.java</h1><pre class="source lang-java linenums">package bank.system;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Bank customer directory and executable application entry point.
+ */
+public class Bank {
+<span class="fc" id="L20">  private static final Logger LOGGER = LoggerFactory.getLogger(Bank.class);</span>
+  private static final String CUSTOMER_ID_PATTERN = &quot;\\d{9}&quot;;
+<span class="fc" id="L22">  private List&lt;Customer&gt; customerList = new ArrayList&lt;&gt;();</span>
+
+  /** Creates an empty bank directory. */
+<span class="fc" id="L25">  public Bank() {</span>
+    // The field initializer establishes an empty customer list.
+<span class="fc" id="L27">  }</span>
+
+  /**
+   * Returns all registered customers.
+   *
+   * @return customers in insertion order
+   */
+  public List&lt;Customer&gt; getCustomerList() {
+<span class="fc" id="L35">    return customerList;</span>
+  }
+
+  /**
+   * Replaces the customer list.
+   *
+   * @param customers new customers, or {@code null} for an empty list
+   */
+  public void setCustomerList(List&lt;Customer&gt; customers) {
+<span class="fc bfc" id="L44" title="All 2 branches covered.">    customerList = customers == null ? new ArrayList&lt;&gt;() : customers;</span>
+<span class="fc" id="L45">  }</span>
+
+  /**
+   * Reads customer records and their accounts from a text stream. A customer
+   * line ends in a nine-digit identifier; account lines use number, type, balance.
+   *
+   * @param inputStream source to read; {@code null} is ignored
+   */
+  public void readCustomerList(InputStream inputStream) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">    if (inputStream == null) {</span>
+<span class="fc" id="L55">      LOGGER.warn(&quot;Customer import skipped: input stream is null&quot;);</span>
+<span class="fc" id="L56">      return;</span>
+    }
+<span class="fc" id="L58">    LOGGER.info(&quot;Customer import started&quot;);</span>
+<span class="fc" id="L59">    Customer currentCustomer = null;</span>
+<span class="fc" id="L60">    try (BufferedReader reader =</span>
+        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+      String line;
+<span class="fc bfc" id="L63" title="All 2 branches covered.">      while ((line = reader.readLine()) != null) {</span>
+<span class="fc" id="L64">        String trimmedLine = line.trim();</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (trimmedLine.isEmpty()) {</span>
+<span class="nc" id="L66">          continue;</span>
+        }
+        try {
+<span class="fc" id="L69">          currentCustomer = readRecord(trimmedLine, currentCustomer);</span>
+<span class="fc" id="L70">        } catch (IllegalArgumentException exception) {</span>
+<span class="fc" id="L71">          LOGGER.error(&quot;Skipping invalid customer record: {}&quot;, trimmedLine, exception);</span>
+<span class="fc" id="L72">        }</span>
+<span class="fc" id="L73">      }</span>
+<span class="fc" id="L74">      LOGGER.info(&quot;Customer import completed: customerCount={}&quot;, customerList.size());</span>
+<span class="nc" id="L75">    } catch (IOException exception) {</span>
+<span class="nc" id="L76">      LOGGER.error(&quot;Customer import failed&quot;, exception);</span>
+<span class="fc" id="L77">    }</span>
+<span class="fc" id="L78">  }</span>
+
+  /**
+   * Imports customers from a file located under the supplied directory.
+   *
+   * @param dataDirectory directory containing the customer data file
+   * @throws IOException if the file cannot be opened
+   */
+  public void readCustomerFile(Path dataDirectory) throws IOException {
+<span class="fc" id="L87">    Path customerFile = dataDirectory.resolve(&quot;customers.txt&quot;);</span>
+<span class="fc" id="L88">    try (InputStream inputStream = Files.newInputStream(customerFile)) {</span>
+<span class="fc" id="L89">      readCustomerList(inputStream);</span>
+    }
+<span class="fc" id="L91">  }</span>
+
+  private Customer readRecord(String line, Customer currentCustomer) {
+<span class="fc" id="L94">    int lastSpace = line.lastIndexOf(' ');</span>
+<span class="pc bpc" id="L95" title="1 of 4 branches missed.">    if (lastSpace &gt; 0 &amp;&amp; line.substring(lastSpace + 1).matches(CUSTOMER_ID_PATTERN)) {</span>
+<span class="fc" id="L96">      String name = line.substring(0, lastSpace).trim();</span>
+<span class="fc" id="L97">      Customer customer = new Customer(Long.parseLong(line.substring(lastSpace + 1)), name);</span>
+<span class="fc" id="L98">      customerList.add(customer);</span>
+<span class="fc" id="L99">      LOGGER.info(&quot;Customer added: id={}, name={}&quot;, customer.getIdNumber(), customer.getFullName());</span>
+<span class="fc" id="L100">      return customer;</span>
+    }
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    if (currentCustomer == null) {</span>
+<span class="nc" id="L103">      throw new IllegalArgumentException(&quot;Account record appears before a customer record&quot;);</span>
+    }
+<span class="fc" id="L105">    String[] parts = line.split(&quot;\\s+&quot;);</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">    if (parts.length &lt; 3) {</span>
+<span class="nc" id="L107">      throw new IllegalArgumentException(&quot;Account record must contain number, type, and balance&quot;);</span>
+    }
+<span class="fc" id="L109">    long accountNumber = Long.parseLong(parts[0]);</span>
+<span class="fc" id="L110">    double balance = Double.parseDouble(parts[2]);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">    if (Account.CHECKING_TYPE.equals(parts[1])) {</span>
+<span class="fc" id="L112">      currentCustomer.addAccount(new CheckingAccount(accountNumber, balance));</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">    } else if (Account.SAVINGS_TYPE.equals(parts[1])) {</span>
+<span class="fc" id="L114">      currentCustomer.addAccount(new SavingsAccount(accountNumber, balance));</span>
+    } else {
+<span class="fc" id="L116">      throw new IllegalArgumentException(&quot;Unknown account type: &quot; + parts[1]);</span>
+    }
+<span class="fc" id="L118">    return currentCustomer;</span>
+  }
+
+  /**
+   * Formats customers sorted by identifier.
+   *
+   * @return newline-separated customer information
+   */
+  public String getCustomersInfoByIdOrder() {
+<span class="fc" id="L127">    List&lt;Customer&gt; sortedCustomers = new ArrayList&lt;&gt;(customerList);</span>
+<span class="fc" id="L128">    sortedCustomers.sort(Comparator.comparingLong(Customer::getIdNumber));</span>
+<span class="fc" id="L129">    return formatCustomers(sortedCustomers);</span>
+  }
+
+  /**
+   * Formats customers sorted by name and then identifier.
+   *
+   * @return newline-separated customer information
+   */
+  public String getCustomersInfoByNameOrder() {
+<span class="fc" id="L138">    List&lt;Customer&gt; sortedCustomers = new ArrayList&lt;&gt;(customerList);</span>
+<span class="fc" id="L139">    sortedCustomers.sort(Comparator.comparing(Customer::getFullName)</span>
+<span class="fc" id="L140">        .thenComparingLong(Customer::getIdNumber));</span>
+<span class="fc" id="L141">    return formatCustomers(sortedCustomers);</span>
+  }
+
+  private String formatCustomers(List&lt;Customer&gt; customers) {
+<span class="fc" id="L145">    StringBuilder result = new StringBuilder();</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">    for (Customer customer : customers) {</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">      if (result.length() &gt; 0) {</span>
+<span class="fc" id="L148">        result.append('\n');</span>
+      }
+<span class="fc" id="L150">      result.append(customer.getCustomerInfo());</span>
+<span class="fc" id="L151">    }</span>
+<span class="fc" id="L152">    return result.toString();</span>
+  }
+
+  /**
+   * Runs a small bank-system demonstration.
+   *
+   * @param args command-line arguments
+   */
+  public static void main(String[] args) {
+<span class="nc" id="L161">    LOGGER.info(&quot;Bank system started&quot;);</span>
+<span class="nc" id="L162">    CheckingAccount account = new CheckingAccount(10001L, 10000.0);</span>
+<span class="nc" id="L163">    account.deposit(2500.0);</span>
+<span class="nc" id="L164">    LOGGER.info(&quot;Demo transaction history:\n{}&quot;, account.getTransactionHistory());</span>
+<span class="nc" id="L165">    LOGGER.info(&quot;Bank system stopped&quot;);</span>
+<span class="nc" id="L166">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

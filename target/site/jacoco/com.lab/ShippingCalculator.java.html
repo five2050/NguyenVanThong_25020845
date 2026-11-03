@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShippingCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Week 9 Bank System</a> &gt; <a href="index.source.html" class="el_package">com.lab</a> &gt; <span class="el_source">ShippingCalculator.java</span></div><h1>ShippingCalculator.java</h1><pre class="source lang-java linenums">package com.lab;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Calculates shipping fees for standard and express deliveries.
+ */
+<span class="fc" id="L9">public class ShippingCalculator {</span>
+<span class="fc" id="L10">  private static final Logger LOGGER = LoggerFactory.getLogger(ShippingCalculator.class);</span>
+  private static final String EXPRESS = &quot;EXPRESS&quot;;
+  private static final String STANDARD = &quot;STANDARD&quot;;
+
+  /**
+   * Calculates a shipping fee.
+   *
+   * @param weight package weight, which must be positive
+   * @param type shipping service type
+   * @return shipping fee in the same currency units as the rate constants
+   * @throws IllegalArgumentException if the weight or service type is invalid
+   */
+  public double calculate(double weight, String type) {
+<span class="fc bfc" id="L23" title="All 2 branches covered.">    if (weight &lt;= 0) {</span>
+<span class="fc" id="L24">      IllegalArgumentException exception =</span>
+          new IllegalArgumentException(&quot;Weight must be positive&quot;);
+<span class="fc" id="L26">      LOGGER.error(&quot;Shipping calculation rejected: weight={}, type={}&quot;, weight, type, exception);</span>
+<span class="fc" id="L27">      throw exception;</span>
+    }
+<span class="fc bfc" id="L29" title="All 2 branches covered.">    if (EXPRESS.equals(type)) {</span>
+<span class="fc" id="L30">      double fee = weight * 5000 + 20000;</span>
+<span class="fc" id="L31">      LOGGER.info(&quot;Shipping calculated: type={}, weight={}, fee={}&quot;, type, weight, fee);</span>
+<span class="fc" id="L32">      return fee;</span>
+    }
+<span class="fc bfc" id="L34" title="All 2 branches covered.">    if (STANDARD.equals(type)) {</span>
+<span class="fc" id="L35">      double fee = weight * 3000;</span>
+<span class="fc" id="L36">      LOGGER.info(&quot;Shipping calculated: type={}, weight={}, fee={}&quot;, type, weight, fee);</span>
+<span class="fc" id="L37">      return fee;</span>
+    }
+<span class="fc" id="L39">    IllegalArgumentException exception = new IllegalArgumentException(&quot;Unknown type: &quot; + type);</span>
+<span class="fc" id="L40">    LOGGER.error(&quot;Shipping calculation rejected: weight={}, type={}&quot;, weight, type, exception);</span>
+<span class="fc" id="L41">    throw exception;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
